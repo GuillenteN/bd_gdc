@@ -31,7 +31,7 @@ while True:
             #Dar de baja un estudiante
             alumno = input("Dime el alumno a dar de baja: ")
             asig = input("Dime la asignatura en la que darle de baja: ")
-            asignaturas[asig].remove(alumno) #aasdasdasdfcdsafds
+            asignaturas[asig].remove(alumno) #aasdasdasdf
 
         case _:
             salir = True

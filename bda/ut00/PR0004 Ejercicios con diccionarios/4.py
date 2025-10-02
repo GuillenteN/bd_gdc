@@ -5,8 +5,8 @@ asignaturas = {
     "Historia": ["María", "Juan", "Elena", "Ana"],
     "Inglés": ["Carlos", "Sofía", "Jorge", "María"],
 }
-
-while True:
+salir = False
+while not salir:
     print("1.- Listar estudiantes de una asignatura")
     print("2.- Matricular estudiantes")
     print("3.- Dar de baja un estudiante")

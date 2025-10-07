@@ -7,3 +7,4 @@ for char in str.lower():
         res[char] += 1
     else:
         res[char] = 1
+print(res)

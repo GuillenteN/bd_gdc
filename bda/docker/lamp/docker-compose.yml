@@ -3,7 +3,7 @@ services:
     #image: php:8.2-apache
     image: elki97413/pdo_mysql-php-apache:latest
     container_name: apache_php
-    restart: always
+    restart: no
     volumes:
       - ./www:/var/www/html   # Tu código PHP en ./www
     ports:
@@ -17,7 +17,7 @@ services:
   db:
     image: mysql:8.0
     container_name: mysql_db
-    restart: always
+    restart: no
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: testdb
@@ -33,7 +33,7 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: phpmyadmin_app
-    restart: always
+    restart: no
     environment:
       PMA_HOST: db
       PMA_USER: root

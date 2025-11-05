@@ -21,13 +21,11 @@ hdfs dfs -put /home/hadoop/Downloads/vehicle_price_prediction.csv /guille/proyec
 ```bash
 hdfs dfs -cat /guille/proyecto_datos/vehicle_price_prediction.csv
 ```
-salida:
 ![alt text](./salida1.png)
 
 ```bash
 hdfs dfs -cat /guille/proyecto_datos/vehicle_price_prediction.csv | wc -l
 ```
-salida:
 ![alt text](./salida2.png)
 
 ## 4. Organización del proyecto
@@ -57,7 +55,6 @@ hdfs dfs -get /guille/proyecto_datos/procesados/vehicle_price_prediction.csv ./
 ```bash
 hdfs dfs -rm /guille/proyecto_datos/prueba.txt
 ```
-salida:
 ![alt text](./salida3.png)
 
 ## 9. (Opcional, avanzado)

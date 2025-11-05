@@ -100,3 +100,18 @@ Al añadir el pedido con lpush se añade al principio, por lo que como los urgen
 ```Python
 procesar_pedido()
 ```
+
+# Visualización en Redis Insight
+
+## Localización lista "Pedidos"
+![alt text](./salida6.png)
+
+## Los datos se almacenan de izquierda a derecha
+![alt text](./salida7.png)
+
+## Vemos como cambian los elementos al añadir o eliminar pedidos
+![alt text](./salida8.png)
+![alt text](./salida9.png)
+
+## Las listas elmininadas ya no aparecen en Redis
+![alt text](./salida9.png)

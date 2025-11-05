@@ -1,4 +1,4 @@
-# Especialización en Big Data
+# Big Data
 ## Guillermo Díez Carro
 
 - [Big Data Aplicado](./bda/index.md)

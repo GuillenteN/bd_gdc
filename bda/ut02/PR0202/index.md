@@ -40,6 +40,8 @@ hdfs dfs -mv /guille/proyecto_datos/vehicle_price_prediction.csv /guille/proyect
 
 ## 5. Colaboración en el equipo
 ```bash
+hdfs dfs -mkdir /compartido
+hdfs dfs -cp /guille/proyecto_datos/procesados/vehicle_price_prediction.csv /compartido
 ```
 
 ## 6. Recuperación de datos
@@ -49,6 +51,11 @@ hdfs dfs -get /guille/proyecto_datos/procesados/vehicle_price_prediction.csv ./
 
 ## 7. Control de accesos
 ```bash
+hdfs dfs -ls /guille/proyecto_datos
+hdfs dfs -ls /guille/proyecto_datos/procesados
+hdfs dfs -ls /guille/proyecto_datos/backup
+
+hdfs dfs -chmod 600 /guille/proyecto_datos/backup/vehicle_price_prediction.csv
 ```
 
 ## 8. Mantenimiento
@@ -58,3 +65,7 @@ hdfs dfs -rm /guille/proyecto_datos/prueba.txt
 ![alt text](./salida3.png)
 
 ## 9. (Opcional, avanzado)
+```bash
+hdfs dfsadmin -setQuota 5 /guille/proyecto_datos
+```
+![alt text](./salida4.png)

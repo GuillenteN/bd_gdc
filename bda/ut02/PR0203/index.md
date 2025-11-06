@@ -23,7 +23,7 @@ hdfs dfs -put log3.log /proyectos/ecommerce/raw
 ```
 
 ## 3. Inspección de datos
-Listamos el contenido de /raw
+Listamos el contenido de `/raw`
 ```bash
 hdfs dfs -ls /proyectos/ecommerce/raw
 ```
@@ -46,7 +46,7 @@ hdfs dfs -cat /proyectos/ecommerce/raw/log3.log | wc -l
 ![alt text](./salida3.png)
 
 ## 4. Organización de los logs
-Copiamos los archivos de /raw a /backup
+Copiamos los archivos de `/raw` a `/backup`
 ```bash
 hdfs dfs -cp /proyectos/ecommerce/raw/log* /proyectos/ecommerce/backup
 ```

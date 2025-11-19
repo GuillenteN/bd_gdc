@@ -51,3 +51,6 @@ if current_city is not None:
 -input /city_temperature.csv \
 -output /salida_PR0402
 ```
+
+## 1. Media histórica por país
+### 

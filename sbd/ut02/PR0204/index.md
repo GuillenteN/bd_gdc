@@ -1,4 +1,4 @@
-# PR0203 Estructuras avanzadas de Redis
+# PR0204: Datos geoespaciales en Redis
 
 ## Gestión de jugadores
 
@@ -54,9 +54,7 @@ def register_login(player_id):
 
 ### 2. Función count_unique_logins(date)
 ```python
-def count_unique_logins(date):
-    key = f"unique:players:{date}"
-    return r.pfcount(key)
+
 ```
 
 ### 3. Función weekly_report(dates)

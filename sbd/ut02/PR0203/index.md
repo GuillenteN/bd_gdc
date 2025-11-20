@@ -61,5 +61,8 @@ def count_unique_logins(date):
 
 ### 3. Función weekly_report(dates)
 ```python
-
+def weekly_report(dates):
+    keys = [f"unique:players:{fecha}" for fecha in dates]
+    r.pfmerge("unique:players:week", *keys)
+    return r.pfcount("unique:players:week")
 ```

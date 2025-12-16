@@ -121,7 +121,7 @@ for line in sys.stdin:
 ```
 #### - Reducer:
 ```bash
-%%writefile reducer_url.py
+%%writefile reducer_2.py
 #!/usr/bin/env python3
 import sys
 

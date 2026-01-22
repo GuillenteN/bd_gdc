@@ -233,7 +233,9 @@ df_limpio = (df_contactos
 ```bash
 df_final = (df_limpio
                 .filter(
-                    (col("Provincia") == "Burgos") & (col("categoria_actividad").like("%Bodega%")) & (col("sitio_web").isNotNull())
+                    (col("Provincia") == "Burgos") &
+                    (col("categoria_actividad").like("%Bodega%")) &
+                    (col("sitio_web").isNotNull())
                 )
 )
 ```

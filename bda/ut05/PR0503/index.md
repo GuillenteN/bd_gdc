@@ -80,5 +80,20 @@ df_eng = ( df_crop.withColumn("Region", substring(col("Region"), -1, 1))
 ```
 ### 2.- Transformación matemática
 ```bash
-
+df_eng = ( df_eng.withColumn("log_Rainfall_mm", log(col("Rainfall_mm") + 1))
+                 .withColumn("Yield_Redondeado", round(col("Yield_ton_per_ha"), 1))
+                 .withColumn("Rendimiento_Bancario", bround(col("Yield_ton_per_ha"), 0))
+)
+df_eng.show(5)
+```
+```bash
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+
+|  Crop|Region|Soil_Type|Soil_pH|Rainfall_mm|Temperature_C|Humidity_pct|Fertilizer_Used_kg|Irrigation|Pesticides_Used_kg|Planting_Density|Previous_Crop|Yield_ton_per_ha|          Crop_ID|  log_Rainfall_mm|Yield_Redondeado|Rendimiento_Bancario|
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+
+| MAIZE|   XXC|    Sandy|   7.01|     1485.4|         19.7|        40.3|             105.1|      Drip|              10.2|            23.2|         Rice|          101.48| CODIGO_XXC-MAIZE|7.304112368059574|           101.5|               101.0|
+|BARLEY|   XXD|     Loam|   5.79|      399.4|         29.1|        55.4|             221.8| Sprinkler|              35.5|             7.4|       Barley|          127.39|CODIGO_XXD-BARLEY|5.992464047441065|           127.4|               127.0|
+|  RICE|   XXC|     Clay|   7.24|      980.9|         30.5|        74.4|              61.2| Sprinkler|              40.0|             5.1|        Wheat|           68.99|  CODIGO_XXC-RICE|6.889489470175245|            69.0|                69.0|
+| MAIZE|   XXD|     Loam|   6.79|     1054.3|         26.4|        62.0|             257.8|      Drip|              42.7|            23.7|         None|          169.06| CODIGO_XXD-MAIZE|6.961580365677045|           169.1|               169.0|
+| MAIZE|   XXD|    Sandy|   5.96|      744.6|         20.4|        70.9|             195.8|      Drip|              25.5|            15.6|        Maize|          118.71| CODIGO_XXD-MAIZE|6.614189263371381|           118.7|               119.0|
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+
 ```

@@ -1,0 +1,135 @@
+# PR0503: Limpieza de datos sobre dataset de cultivos
+
+## Dataset 1: Datos para la predicción del rendimiento en cultivos
+```bash
+schema_cropyield = StructType([
+    StructField("Crop", StringType(), True),
+    StructField("Region", StringType(), True),
+    StructField("Soil_Type", StringType(), True),
+    StructField("Soil_pH", DoubleType(), True),
+    StructField("Rainfall_mm", DoubleType(), True),
+    StructField("Temperature_C", DoubleType(), True),
+    StructField("Humidity_pct", DoubleType(), True),
+    StructField("Fertilizer_Used_kg", DoubleType(), True),
+    StructField("Irrigation", StringType(), True),
+    StructField("Pesticides_Used_kg", DoubleType(), True),
+    StructField("Planting_Density", DoubleType(), True),
+    StructField("Previous_Crop", StringType(), True),
+    StructField("Yield_ton_per_ha", DoubleType(), True),
+])
+```
+```bash
+df_crop = ( spark.read
+           .format("csv")
+           .schema(schema_cropyield)
+           .option("header", "true")
+           .load("crop_yield_dataset.csv")
+)
+```
+### 1.- Creación de un ID único
+```bash
+df_eng = ( df_crop.withColumn("Region", substring(col("Region"), -1, 1))
+                  .withColumn("Region", lpad(col("Region"), 3, "X"))
+                  .withColumn("Crop", upper(col("Crop")))
+                  .withColumn("Crop_ID",
+                             concat_ws(
+                                 "_",
+                                 monotonically_increasing_id(),
+                                  concat_ws(
+                                     "-",
+                                     col("region"),
+                                     col("Crop")
+                             )))
+         )
+```
+```bash
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+------------+
+|  Crop|Region|Soil_Type|Soil_pH|Rainfall_mm|Temperature_C|Humidity_pct|Fertilizer_Used_kg|Irrigation|Pesticides_Used_kg|Planting_Density|Previous_Crop|Yield_ton_per_ha|     Crop_ID|
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+------------+
+| MAIZE|   XXC|    Sandy|   7.01|     1485.4|         19.7|        40.3|             105.1|      Drip|              10.2|            23.2|         Rice|          101.48| 0_XXC-MAIZE|
+|BARLEY|   XXD|     Loam|   5.79|      399.4|         29.1|        55.4|             221.8| Sprinkler|              35.5|             7.4|       Barley|          127.39|1_XXD-BARLEY|
+|  RICE|   XXC|     Clay|   7.24|      980.9|         30.5|        74.4|              61.2| Sprinkler|              40.0|             5.1|        Wheat|           68.99|  2_XXC-RICE|
+| MAIZE|   XXD|     Loam|   6.79|     1054.3|         26.4|        62.0|             257.8|      Drip|              42.7|            23.7|         None|          169.06| 3_XXD-MAIZE|
+| MAIZE|   XXD|    Sandy|   5.96|      744.6|         20.4|        70.9|             195.8|      Drip|              25.5|            15.6|        Maize|          118.71| 4_XXD-MAIZE|
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+------------+
+```
+o
+```bash
+df_eng = ( df_crop.withColumn("Region", substring(col("Region"), -1, 1))
+                  .withColumn("Region", lpad(col("Region"), 3, "X"))
+                  .withColumn("Crop", upper(col("Crop")))
+                  .withColumn("Crop_ID",
+                                 concat(
+                                    lit("CODIGO_"),
+                                    col("region"),
+                                    lit("-"),
+                                    col("Crop")
+                             ))
+         )
+```
+```bash
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+
+|  Crop|Region|Soil_Type|Soil_pH|Rainfall_mm|Temperature_C|Humidity_pct|Fertilizer_Used_kg|Irrigation|Pesticides_Used_kg|Planting_Density|Previous_Crop|Yield_ton_per_ha|          Crop_ID|
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+
+| MAIZE|   XXC|    Sandy|   7.01|     1485.4|         19.7|        40.3|             105.1|      Drip|              10.2|            23.2|         Rice|          101.48| CODIGO_XXC-MAIZE|
+|BARLEY|   XXD|     Loam|   5.79|      399.4|         29.1|        55.4|             221.8| Sprinkler|              35.5|             7.4|       Barley|          127.39|CODIGO_XXD-BARLEY|
+|  RICE|   XXC|     Clay|   7.24|      980.9|         30.5|        74.4|              61.2| Sprinkler|              40.0|             5.1|        Wheat|           68.99|  CODIGO_XXC-RICE|
+| MAIZE|   XXD|     Loam|   6.79|     1054.3|         26.4|        62.0|             257.8|      Drip|              42.7|            23.7|         None|          169.06| CODIGO_XXD-MAIZE|
+| MAIZE|   XXD|    Sandy|   5.96|      744.6|         20.4|        70.9|             195.8|      Drip|              25.5|            15.6|        Maize|          118.71| CODIGO_XXD-MAIZE|
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+
+```
+### 2.- Transformación matemática
+```bash
+df_eng = ( df_eng.withColumn("log_Rainfall_mm", log(col("Rainfall_mm") + 1))
+                 .withColumn("Yield_Redondeado", round(col("Yield_ton_per_ha"), 1))
+                 .withColumn("Rendimiento_Bancario", bround(col("Yield_ton_per_ha"), 0))
+)
+df_eng.show(5)
+```
+```bash
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+
+|  Crop|Region|Soil_Type|Soil_pH|Rainfall_mm|Temperature_C|Humidity_pct|Fertilizer_Used_kg|Irrigation|Pesticides_Used_kg|Planting_Density|Previous_Crop|Yield_ton_per_ha|          Crop_ID|  log_Rainfall_mm|Yield_Redondeado|Rendimiento_Bancario|
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+
+| MAIZE|   XXC|    Sandy|   7.01|     1485.4|         19.7|        40.3|             105.1|      Drip|              10.2|            23.2|         Rice|          101.48| CODIGO_XXC-MAIZE|7.304112368059574|           101.5|               101.0|
+|BARLEY|   XXD|     Loam|   5.79|      399.4|         29.1|        55.4|             221.8| Sprinkler|              35.5|             7.4|       Barley|          127.39|CODIGO_XXD-BARLEY|5.992464047441065|           127.4|               127.0|
+|  RICE|   XXC|     Clay|   7.24|      980.9|         30.5|        74.4|              61.2| Sprinkler|              40.0|             5.1|        Wheat|           68.99|  CODIGO_XXC-RICE|6.889489470175245|            69.0|                69.0|
+| MAIZE|   XXD|     Loam|   6.79|     1054.3|         26.4|        62.0|             257.8|      Drip|              42.7|            23.7|         None|          169.06| CODIGO_XXD-MAIZE|6.961580365677045|           169.1|               169.0|
+| MAIZE|   XXD|    Sandy|   5.96|      744.6|         20.4|        70.9|             195.8|      Drip|              25.5|            15.6|        Maize|          118.71| CODIGO_XXD-MAIZE|6.614189263371381|           118.7|               119.0|
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+
+```
+### 3.- Comparación de insumos
+```bash
+df_eng = ( df_eng.withColumn("Max_Quimico_kg", greatest(col("Fertilizer_Used_kg"), col("Pesticides_Used_kg")))
+)
+df_eng.show(5)
+```
+```bash
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+--------------+
+|  Crop|Region|Soil_Type|Soil_pH|Rainfall_mm|Temperature_C|Humidity_pct|Fertilizer_Used_kg|Irrigation|Pesticides_Used_kg|Planting_Density|Previous_Crop|Yield_ton_per_ha|          Crop_ID|  log_Rainfall_mm|Yield_Redondeado|Rendimiento_Bancario|Max_Quimico_kg|
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+--------------+
+| MAIZE|   XXC|    Sandy|   7.01|     1485.4|         19.7|        40.3|             105.1|      Drip|              10.2|            23.2|         Rice|          101.48| CODIGO_XXC-MAIZE|7.304112368059574|           101.5|               101.0|         105.1|
+|BARLEY|   XXD|     Loam|   5.79|      399.4|         29.1|        55.4|             221.8| Sprinkler|              35.5|             7.4|       Barley|          127.39|CODIGO_XXD-BARLEY|5.992464047441065|           127.4|               127.0|         221.8|
+|  RICE|   XXC|     Clay|   7.24|      980.9|         30.5|        74.4|              61.2| Sprinkler|              40.0|             5.1|        Wheat|           68.99|  CODIGO_XXC-RICE|6.889489470175245|            69.0|                69.0|          61.2|
+| MAIZE|   XXD|     Loam|   6.79|     1054.3|         26.4|        62.0|             257.8|      Drip|              42.7|            23.7|         None|          169.06| CODIGO_XXD-MAIZE|6.961580365677045|           169.1|               169.0|         257.8|
+| MAIZE|   XXD|    Sandy|   5.96|      744.6|         20.4|        70.9|             195.8|      Drip|              25.5|            15.6|        Maize|          118.71| CODIGO_XXD-MAIZE|6.614189263371381|           118.7|               119.0|         195.8|
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+--------------+
+```
+### 4.- Simulación de fechas
+```bash
+df_eng = ( df_eng.withColumn("Fecha_Siembra", to_date(lit("2023-04-01")))
+                 .withColumn("Fecha_Estimada_Cosecha", date_add(col("Fecha_Siembra"), 150))
+                 .withColumn("Mes_Cosecha", month(col("Fecha_Estimada_Cosecha")))
+)
+df_eng.show(5)
+```
+```bash
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+--------------+-------------+----------------------+-----------+
+|  Crop|Region|Soil_Type|Soil_pH|Rainfall_mm|Temperature_C|Humidity_pct|Fertilizer_Used_kg|Irrigation|Pesticides_Used_kg|Planting_Density|Previous_Crop|Yield_ton_per_ha|          Crop_ID|  log_Rainfall_mm|Yield_Redondeado|Rendimiento_Bancario|Max_Quimico_kg|Fecha_Siembra|Fecha_Estimada_Cosecha|Mes_Cosecha|
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+--------------+-------------+----------------------+-----------+
+| MAIZE|   XXC|    Sandy|   7.01|     1485.4|         19.7|        40.3|             105.1|      Drip|              10.2|            23.2|         Rice|          101.48| CODIGO_XXC-MAIZE|7.304112368059574|           101.5|               101.0|         105.1|   2023-04-01|            2023-08-29|          8|
+|BARLEY|   XXD|     Loam|   5.79|      399.4|         29.1|        55.4|             221.8| Sprinkler|              35.5|             7.4|       Barley|          127.39|CODIGO_XXD-BARLEY|5.992464047441065|           127.4|               127.0|         221.8|   2023-04-01|            2023-08-29|          8|
+|  RICE|   XXC|     Clay|   7.24|      980.9|         30.5|        74.4|              61.2| Sprinkler|              40.0|             5.1|        Wheat|           68.99|  CODIGO_XXC-RICE|6.889489470175245|            69.0|                69.0|          61.2|   2023-04-01|            2023-08-29|          8|
+| MAIZE|   XXD|     Loam|   6.79|     1054.3|         26.4|        62.0|             257.8|      Drip|              42.7|            23.7|         None|          169.06| CODIGO_XXD-MAIZE|6.961580365677045|           169.1|               169.0|         257.8|   2023-04-01|            2023-08-29|          8|
+| MAIZE|   XXD|    Sandy|   5.96|      744.6|         20.4|        70.9|             195.8|      Drip|              25.5|            15.6|        Maize|          118.71| CODIGO_XXD-MAIZE|6.614189263371381|           118.7|               119.0|         195.8|   2023-04-01|            2023-08-29|          8|
++------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+--------------+-------------+----------------------+-----------+
+```

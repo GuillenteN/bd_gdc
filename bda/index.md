@@ -13,3 +13,5 @@
 - [PR0501: Carga de ficheros CSV en PySpark](./ut05/PR0501/)
 - [PR0502: Manipulación básica de dataframes](./ut05/PR0502/)
 - [PR0503: Limpieza de datos sobre dataset de cultivos](./ut05/PR0503/)
+- [PR0504A: Limpieza de datos sobre dataset de lugares famosos](./ut05/PR0504A/)
+- [PR0504B: Limpieza de datos sobre dataset alojamientos turísticos](./ut05/PR0504B/)

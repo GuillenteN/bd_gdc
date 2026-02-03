@@ -1,7 +1,7 @@
 # PR0503: Limpieza de datos sobre dataset de cultivos
 
 ## Dataset 1: Datos para la predicción del rendimiento en cultivos
-```bash
+```python
 schema_cropyield = StructType([
     StructField("Crop", StringType(), True),
     StructField("Region", StringType(), True),
@@ -18,7 +18,7 @@ schema_cropyield = StructType([
     StructField("Yield_ton_per_ha", DoubleType(), True),
 ])
 ```
-```bash
+```python
 df_crop = ( spark.read
            .format("csv")
            .schema(schema_cropyield)
@@ -27,7 +27,7 @@ df_crop = ( spark.read
 )
 ```
 ### 1.- Creación de un ID único
-```bash
+```python
 df_eng = ( df_crop.withColumn("Region", substring(col("Region"), -1, 1))
                   .withColumn("Region", lpad(col("Region"), 3, "X"))
                   .withColumn("Crop", upper(col("Crop")))
@@ -42,7 +42,7 @@ df_eng = ( df_crop.withColumn("Region", substring(col("Region"), -1, 1))
                              )))
          )
 ```
-```bash
+```python
 +------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+------------+
 |  Crop|Region|Soil_Type|Soil_pH|Rainfall_mm|Temperature_C|Humidity_pct|Fertilizer_Used_kg|Irrigation|Pesticides_Used_kg|Planting_Density|Previous_Crop|Yield_ton_per_ha|     Crop_ID|
 +------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+------------+
@@ -54,7 +54,7 @@ df_eng = ( df_crop.withColumn("Region", substring(col("Region"), -1, 1))
 +------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+------------+
 ```
 o
-```bash
+```python
 df_eng = ( df_crop.withColumn("Region", substring(col("Region"), -1, 1))
                   .withColumn("Region", lpad(col("Region"), 3, "X"))
                   .withColumn("Crop", upper(col("Crop")))
@@ -67,7 +67,7 @@ df_eng = ( df_crop.withColumn("Region", substring(col("Region"), -1, 1))
                              ))
          )
 ```
-```bash
+```python
 +------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+
 |  Crop|Region|Soil_Type|Soil_pH|Rainfall_mm|Temperature_C|Humidity_pct|Fertilizer_Used_kg|Irrigation|Pesticides_Used_kg|Planting_Density|Previous_Crop|Yield_ton_per_ha|          Crop_ID|
 +------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+
@@ -79,14 +79,14 @@ df_eng = ( df_crop.withColumn("Region", substring(col("Region"), -1, 1))
 +------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+
 ```
 ### 2.- Transformación matemática
-```bash
+```python
 df_eng = ( df_eng.withColumn("log_Rainfall_mm", log(col("Rainfall_mm") + 1))
                  .withColumn("Yield_Redondeado", round(col("Yield_ton_per_ha"), 1))
                  .withColumn("Rendimiento_Bancario", bround(col("Yield_ton_per_ha"), 0))
 )
 df_eng.show(5)
 ```
-```bash
+```python
 +------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+
 |  Crop|Region|Soil_Type|Soil_pH|Rainfall_mm|Temperature_C|Humidity_pct|Fertilizer_Used_kg|Irrigation|Pesticides_Used_kg|Planting_Density|Previous_Crop|Yield_ton_per_ha|          Crop_ID|  log_Rainfall_mm|Yield_Redondeado|Rendimiento_Bancario|
 +------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+
@@ -98,12 +98,12 @@ df_eng.show(5)
 +------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+
 ```
 ### 3.- Comparación de insumos
-```bash
+```python
 df_eng = ( df_eng.withColumn("Max_Quimico_kg", greatest(col("Fertilizer_Used_kg"), col("Pesticides_Used_kg")))
 )
 df_eng.show(5)
 ```
-```bash
+```python
 +------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+--------------+
 |  Crop|Region|Soil_Type|Soil_pH|Rainfall_mm|Temperature_C|Humidity_pct|Fertilizer_Used_kg|Irrigation|Pesticides_Used_kg|Planting_Density|Previous_Crop|Yield_ton_per_ha|          Crop_ID|  log_Rainfall_mm|Yield_Redondeado|Rendimiento_Bancario|Max_Quimico_kg|
 +------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+--------------+
@@ -115,14 +115,14 @@ df_eng.show(5)
 +------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+--------------+
 ```
 ### 4.- Simulación de fechas
-```bash
+```python
 df_eng = ( df_eng.withColumn("Fecha_Siembra", to_date(lit("2023-04-01")))
                  .withColumn("Fecha_Estimada_Cosecha", date_add(col("Fecha_Siembra"), 150))
                  .withColumn("Mes_Cosecha", month(col("Fecha_Estimada_Cosecha")))
 )
 df_eng.show(5)
 ```
-```bash
+```python
 +------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+--------------+-------------+----------------------+-----------+
 |  Crop|Region|Soil_Type|Soil_pH|Rainfall_mm|Temperature_C|Humidity_pct|Fertilizer_Used_kg|Irrigation|Pesticides_Used_kg|Planting_Density|Previous_Crop|Yield_ton_per_ha|          Crop_ID|  log_Rainfall_mm|Yield_Redondeado|Rendimiento_Bancario|Max_Quimico_kg|Fecha_Siembra|Fecha_Estimada_Cosecha|Mes_Cosecha|
 +------+------+---------+-------+-----------+-------------+------------+------------------+----------+------------------+----------------+-------------+----------------+-----------------+-----------------+----------------+--------------------+--------------+-------------+----------------------+-----------+

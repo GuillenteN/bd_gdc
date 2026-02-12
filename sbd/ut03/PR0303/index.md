@@ -1,73 +1,36 @@
-# PR0301: Lectura de datos de archivos
+# PR0303: Obtención de datos de una API REST
 
-## 1. Ingesta CSV
+## 1.- Conexión básica y primer dataFrame
+### 1
 ```python
-df = pd.read_csv(
-    'ventas_norte.csv',
-    sep=';',
-    encoding='utf-8',
-)
-```
-## 2. Ingesta Excel
-```python
-!pip install openpyxl
-```
-```python
-df_xlsx = pd.read_excel(
-    'ventas_sur.xlsx',
-    sheet_name=None
-)
-df_xlsx = pd.concat(df_xlsx.values(), ignore_index=True)
-df_xlsx.head()
-```
-## 3. Ingesta JSON (Semi-estructurado)
-```python
-import json
+!pip install requests
+import requests
 
-with open('ventas_este.json') as f:
-    data = json.load(f)
+url = 'https://swapi.dev/api/vehicles/'
 
-df_json = pd.json_normalize(data)
+response = requests.get(url)
+
+if response.status_code == 200:
+    print("Éxito, conexión establecida")
+    datos = response.json()
+    print(datos)
+
+else:
+    print(f"Error: {response.status_code}")
 ```
-## 4. Transformación y Limpieza
+### 2
 ```python
-df_csv = df_csv.rename(columns={
-    "ID_Transaccion": "id",
-    "Fecha_Venta": "fecha",
-    "Nom_Producto": "producto",
-    "Cantidad_Vendida": "cantidad",
-    "Precio_Unit": "precio_unitario"
-})
-df_csv["region"] = "Norte"
+results = datos["results"]
+print(results)
 ```
+### 3
 ```python
-df_xlsx = df_xlsx.rename(columns={
-    "SalesID": "id",
-    "Date": "fecha",
-    "Item": "producto",
-    "Qty": "cantidad",
-    "UnitPrice": "precio_unitario"
-})
-df_xlsx["region"] = "Sur"
+import pandas as pd
+
+df = pd.json_normalize(results)
 ```
+### 4
 ```python
-df_json = df_json.rename(columns={
-    "id_orden": "id",
-    "timestamp": "fecha",
-    "detalles_producto.nombre": "producto",
-    "detalles_producto.specs.cantidad": "cantidad",
-    "detalles_producto.specs.precio": "precio_unitario"
-})
-df_json["region"] = "Este"
-```
-## 5. Consolidación
-```python
-df_total = pd.concat(
-    [df_csv, df_xlsx, df_json],
-    ignore_index=True
-)
-```
-## 6. Exportación Estandarizada
-```python
-df_total.to_csv("ventas_consolidadas.csv", sep=",", encoding="utf-", index=False)
+df.head(5)
+df.columns
 ```

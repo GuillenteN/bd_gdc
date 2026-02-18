@@ -11,3 +11,4 @@
 - [PR0301: Ingesta de datos de archivos CSV, JSON y Excel (I)](./ut03/PR0301/)
 - [PR0302: Ingesta de datos de archivos CSV, JSON y Excel (II)](./ut03/PR0302/)
 - [PR0303: Ingesta de datos de APIs REST](./ut03/PR0303/)
+- [PR0304: API de Spotify](./ut03/PR0304/)

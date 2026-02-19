@@ -1,4 +1,4 @@
-# PR0503: Limpieza de datos sobre dataset de cultivos
+# PR0504A. Limpieza de datos sobre dataset de lugares famosos
 
 ## Dataset 2: Lugares famosos del mundo
 
@@ -28,6 +28,18 @@ df_worldfamousplaces = ( spark.read
                )
 ```
 ### Ejercicio 1: Generación de códigos SKUs
+```bash
+
+```
+### Ejercicio 2: Ajuste de precios y tiempos
+```bash
+
+```
+### Ejercicio 3: Limpieza de texto
+```bash
+
+```
+### Ejercicio 4: Gestión de fechas de campaña
 ```bash
 
 ```

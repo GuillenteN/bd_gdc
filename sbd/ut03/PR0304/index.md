@@ -129,3 +129,32 @@ if __name__ == "__main__":
         
         print("\nPipeline finalizado. Revisa tus archivos locales.")
 ```
+```
+Iniciando pipeline de ingesta...
+Extrayendo IDs de videos...
+Total de videos encontrados: 3546
+
+Muestra de los datos extraídos:
+      video_id                                              title  \
+0  EgMcJ4fS4FA               UHC XXXVI Ep5, OBLITERACIÓN ABSOLUTA   
+1  zD1f_BpDhuY  Se cumplen 10 años de la peor version de Minec...   
+2  K999u4f_Hpg  UHC XXXVI Ep4, LA NUEVA ESTRATEGIA DE LA DOBLE...   
+3  _vP0zkjgun8  ¿Cuánto sabes de Minecraft? Conterstine y ElRi...   
+4  tBx_CkqBlLk   UHC XXXVI Ep3, La magia del código de SlicedLime   
+
+               published_at   views  likes  comments    duration  \
+0 2026-03-02 19:00:12+00:00   35784   4257       448    PT31M30S   
+1 2026-03-01 17:01:24+00:00   92448   5783       907    PT34M22S   
+2 2026-02-28 19:00:30+00:00   44947   4796       214    PT31M22S   
+3 2026-02-27 17:30:24+00:00  185521  11719       711  PT1H34M17S   
+4 2026-02-26 19:00:51+00:00   47261   5032       262    PT31M26S   
+
+   duration_seconds  
+0              1890  
+1              2062  
+2              1882  
+3              5657  
+4              1886  
+
+Pipeline finalizado. Revisa tus archivos locales.
+```

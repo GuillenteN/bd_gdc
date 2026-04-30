@@ -15,3 +15,7 @@
 - [PR0503: Limpieza de datos sobre dataset de cultivos](./ut05/PR0503/)
 - [PR0504A: Limpieza de datos sobre dataset de lugares famosos](./ut05/PR0504A/)
 - [PR0504B: Limpieza de datos sobre dataset alojamientos turísticos](./ut05/PR0504B/)
+
+## UT06: Almacenamiento distribuido con s3
+- [PR0601: Capa bronce en Amazon AWS](./ut06/PR0601/)
+- [PR0602: AWS Lambda](./ut06/PR0602/)

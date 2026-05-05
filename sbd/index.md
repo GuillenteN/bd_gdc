@@ -12,3 +12,7 @@
 - [PR0302: Ingesta de datos de archivos CSV, JSON y Excel (II)](./ut03/PR0302/)
 - [PR0303: Ingesta de datos de APIs REST](./ut03/PR0303/)
 - [PR0304: API de YouTube](./ut03/PR0304/)
+
+## UT05: Visualización de datos y cuadros de mando
+- [PR0501: Introducción a Vega Altair](./ut05/PR0501/)
+- [PR0502: Visualización multivista con Altair](./ut05/PR0502/)

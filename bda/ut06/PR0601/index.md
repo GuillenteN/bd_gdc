@@ -17,6 +17,10 @@ except Exception as e:
     print("Error en la conexión. Revisa tus credenciales.")
     print(e)
 ```
+```python
+¡Conexión exitosa!
+Tienes 3 buckets en tu cuenta.
+```
 
 ## API
 ```python
@@ -33,7 +37,7 @@ def df_playas():
         usecols = ["Nombre", "Provincia", "Término_M", "Duchas", "Aseos", "Acceso_dis", "Bandera_az", "X", "Y", "Grado_ocup", "Grado_urba"]
     )
 
-    print("csv convertido a DataFrame.")
+    print("CSV playas leído.")
     return df_playas
 ```
 
@@ -47,7 +51,6 @@ def datos_aemet(df_playas):
     with open("codigos_provincias.json") as f:
         codigos_provincias = json.load(f)
 
-    print("Obteniendo datos de AEMET.")
     datos_aemet = ""
     for provincia in provincias:
         codigo = codigos_provincias[provincia]
@@ -69,7 +72,7 @@ def datos_aemet(df_playas):
         except RequestException as e:
             print(f"ERROR: {e}")
 
-    print("Datos de AEMET obtenidos.")
+    print("AEMET: datos obtenidos.")
     return datos_aemet
 ```
 
@@ -81,9 +84,8 @@ def subida_datos(s3, bucket, ruta, datos):
 
     if not existe_bucket:
         s3.create_bucket(Bucket = bucket)
-
     s3.upload_file(datos, bucket, ruta)
-    print(f"Dataframe subido con éxito a s3://{bucket}/{ruta}")
+    print(f"Dataframe subido a s3://{bucket}/{ruta}")
 ```
 
 ## Subimos texto
@@ -100,19 +102,23 @@ def subida_texto(s3, bucket, ruta, texto):
             Key = ruta,
             Body = texto.encode('utf-8')
         )
-    print(f"Texto subido con éxito a s3://{bucket}/{ruta}")
+    print(f"Texto subido a s3://{bucket}/{ruta}")
 ```
 
 ## Ejecutamos todas las funciones
 ```python
-s3 = conectar_s3()
 df_playas = df_playas()
 datos_aemet = datos_aemet(df_playas)
-
-fecha_hoy = datetime.datetime.now()
+fecha_actual = datetime.datetime.now()
 
 df_playas.to_csv("df_playas.csv")
 
 subida_datos(s3, BUCKET, "bronce-guille/catalogos/guia_playas/v1/playas.csv", "df_playas.csv")
-subida_texto(s3, BUCKET, f"bronce-guille/meteorologia/prediccion_playas/{fecha_hoy.year}/{fecha_hoy.month}/{fecha_hoy.day}.txt", datos_aemet)
+subida_texto(s3, BUCKET, f"bronce-guille/meteorologia/prediccion_playas/{fecha_actual.year}/{fecha_hoy.month}/{fecha_hoy.day}.txt", datos_aemet)
+```
+```python
+CSV playas leído.
+AEMET: datos obtenidos.
+Dataframe subido a s3://bronce-guille/bronce/catalogos/guia_playas/v1/playas.csv
+Texto subido a s3://bronce-guille/bronce/meteorologia/prediccion_playas/2026/4/8.txt
 ```
